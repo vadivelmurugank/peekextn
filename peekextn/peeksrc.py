@@ -92,9 +92,10 @@ import collections
 
 class  peeksrc:
     _names = ['peekextn.fileextn']
-   
+  
     def __init__(self):
         self._AllExtnNodes = collections.OrderedDict()
+        self.macronodes = collections.OrderedDict()
         self.dirtree = list()
         self.fcnt = 0
         self.fextnlist = list()
@@ -215,7 +216,58 @@ class  peeksrc:
 
                         for fname in fdir[direntry]:
                             print(" ",' '*4*(direntry.count(os.sep)), "%s %s" %(assign,fname))
-    
+
+    def showdoxyoutput(self):
+        # Print all header file paths
+        ftype = "ccpp"
+        extn = 'h'
+        fileXtens = self._AllExtnNodes[ftype]
+        enode = fileXtens[extn]
+        if 'files' in enode.keys():
+            desc  = enode['desc']
+            fdir  = enode['files']
+            if (len(fdir) > 0):
+                print("#"*20); print("# INCLUDE_PATHS");print("#"*20); 
+                print("INCLUDE_PATH = \\")
+                for fp in fdir.keys():
+                    print("    -I%s \\" %os.path.abspath(fp))
+
+        #print predefines
+        ftype = "make"
+        fileXtens = self._AllExtnNodes[ftype]
+        for extn in fileXtens.keys():
+            enode = fileXtens[extn]
+            if 'files' not in enode.keys():
+                continue
+            desc  = enode['desc']
+            fdir  = enode['files']
+            if (len(fdir) > 0):
+                for dirnode in fdir.keys():
+                    for files in fdir[dirnode]:
+                        filename = os.path.join(dirnode, files)
+                        definepat = r"(\-D[\w\t_]+)(=[-]*[\w\t _,\\\"'${}().$&]*)"
+                        with open(filename) as fd:
+                            bufstr = fd.read()
+                            fexpr = re.compile(definepat)
+                            fstr = fexpr.findall(bufstr)
+                            for macro in fstr:
+                                lmacro = macro[0].strip(' \t\n\r')
+                                rmacro = macro[1].strip(' \t\n\r')
+                                if macro not in self.macronodes.keys():
+                                    self.macronodes[lmacro] = list()
+                                fnode = self.macronodes[lmacro]
+                                mstr = lmacro+rmacro
+                                if mstr not in fnode:
+                                    fnode.append(mstr)
+
+        print("#"*20); print("# PREDEFINED");print("#"*20); 
+        print("PREDEFINED = \\")
+        for macro in self.macronodes.keys():
+            fnode = self.macronodes[macro]
+            for fmacro in fnode:
+                print("    %s " %fmacro, end='')
+            print("\\")
+
     def showfileextn(self):
         for ftype in self._AllExtnNodes.keys():
             if (ftype == "unknown"):
@@ -233,22 +285,22 @@ class  peeksrc:
                 desc  = enode['desc']
                 fdir  = enode['files']
                 if (len(fdir) > 0):
-                    if self.showdoxy is True:
-                        print("%-10s: %s" %(extn," ".join([str("-I"+os.path.abspath(fp)) for fp in fdir.keys()])))
-                    else:
-                        print( "%20s %s %s" %(extn, assign, desc))
-                        if self.showpath is True:
-                            for dirnode in fdir.keys():
-                                print(' '*24,"+ %s/" %dirnode)
+                    print( "%20s %s %s" %(extn, assign, desc))
+                    if self.showpath is True:
+                        for dirnode in fdir.keys():
+                            print(' '*24,"+ %s/" %dirnode)
 
-                        elif self.showall is True:
-                            for dirnode in fdir.keys():
-                                print(' '*24," %s/" %dirnode)
-                                for files in fdir[dirnode]:
-                                    print(' '*28, files)
+                    elif self.showall is True:
+                        for dirnode in fdir.keys():
+                            print(' '*24," %s/" %dirnode)
+                            for files in fdir[dirnode]:
+                                print(' '*28, files)
     def showextn(self):
-        self.showfileextn()
-        self.showtreedir()
+        if self.showdoxy is True:
+            self.showdoxyoutput()
+        else:
+            self.showfileextn()
+            self.showtreedir()
 
     def parseCmdLineOptions(self):
         level = 0

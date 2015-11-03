@@ -199,6 +199,7 @@ hwFileXtens = {
     "vh"           :   { 'desc' : "Verilog Header"},
     "bit"          :   { 'desc' : "Bit Definition "},
     "reg"          :   { 'desc' : "Registers Definition"},
+    "rdl"          :   { 'desc' : "Register definition language"},
 }
 
 unknownFileXtens = {
