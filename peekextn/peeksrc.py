@@ -245,7 +245,8 @@ class  peeksrc:
                 for dirnode in fdir.keys():
                     for files in fdir[dirnode]:
                         filename = os.path.join(dirnode, files)
-                        definepat = r"(\-D[\w\t_]+)(=[-]*[\w\t _,\\\"'${}().$&]*)"
+                        #definepat = r"(\-D[\w\t_]+)([=]?[-]*[\w\t _,\\\"'${}().$&]*)"
+			definepat = r"(\-D[\w\t_]+(?:[\"']?))([\s]+|[=]?[\w\t\- _,\\\"'${}().$&]+)"
                         with open(filename) as fd:
                             bufstr = fd.read()
                             fexpr = re.compile(definepat)
