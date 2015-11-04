@@ -230,7 +230,7 @@ class  peeksrc:
                 print("#"*20); print("# INCLUDE_PATHS");print("#"*20); 
                 print("INCLUDE_PATH = \\")
                 for fp in fdir.keys():
-                    print("    -I%s \\" %os.path.abspath(fp))
+                    print("    %s \\" %os.path.abspath(fp))
 
         #print predefines
         ftype = "make"
@@ -245,15 +245,14 @@ class  peeksrc:
                 for dirnode in fdir.keys():
                     for files in fdir[dirnode]:
                         filename = os.path.join(dirnode, files)
-                        #definepat = r"(\-D[\w\t_]+)([=]?[-]*[\w\t _,\\\"'${}().$&]*)"
-                        definepat = r"(\-D[\w\t_]+(?:[\"']?))([\s]+|[=]?[\w\t\- _,\\\"'${}().$&]+)"
+                        definepat = r"(\-D)([\w\t_]+(?:[\"']?))([\s]+|[=]?[\w\t\- _,\\\"'${}().$&]+)"
                         with open(filename) as fd:
                             bufstr = fd.read()
                             fexpr = re.compile(definepat)
                             fstr = fexpr.findall(bufstr)
                             for macro in fstr:
-                                lmacro = macro[0].strip(' \t\n\r')
-                                rmacro = macro[1].strip(' \t\n\r')
+                                lmacro = macro[1].strip(' \t\n\r')
+                                rmacro = macro[2].strip(' \t\n\r')
                                 if macro not in self.macronodes.keys():
                                     self.macronodes[lmacro] = list()
                                 fnode = self.macronodes[lmacro]
