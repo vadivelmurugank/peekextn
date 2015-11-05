@@ -5,7 +5,7 @@ setup(
   name = 'peekextn',
   packages_dir = {'peekextn' : ' '},
   packages = ['peekextn'],
-  version = '0.73',
+  version = '0.74',
   description = 'Peek extension and show respective sources',
   author = 'Vadivel',
   author_email = 'vadivelmurugank@gmail.com',
