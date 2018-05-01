@@ -21,6 +21,7 @@ compilerFileXtens = {
     "ld"            :  { 'desc' : "Linker Descriptor script"},
     "ld.script"     :  { 'desc' : "Linker Descriptor script"},
     "abi.*"         :  { 'desc' : "Application binary interface"},
+    "map"           :  { 'desc' : "Application Map file"},
 }
 
 
@@ -116,6 +117,8 @@ makeFileXtens = {
     "Kbuild"       :  { 'desc' : "Kernel Build"},
     "conf"         :  { 'desc' : "Configuration File"},
     "cfg"          :  { 'desc' : "Configuration File"},
+    "ini"          :  { 'desc' : "Init config File"},
+    "spec"         :  { 'desc' : "Specification File"},
     "def"          :  { 'desc' : "Definition File"},
     "in"           :  { 'desc' : "Configure includes"},
     "bld"          :  { 'desc' : "Build file"},

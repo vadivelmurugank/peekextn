@@ -104,6 +104,7 @@ class  peeksrc:
         self.showpath = False
         self.showdoxy = False
         self.showdirtree = False
+        self.showMakeInternals = False
         self.level = 0
         self.getExtnNodes()
         self.parseCmdLineOptions()
@@ -216,6 +217,17 @@ class  peeksrc:
 
                         for fname in fdir[direntry]:
                             print(" ",' '*4*(direntry.count(os.sep)), "%s %s" %(assign,fname))
+                            if (ftype == 'make') and (self.showMakeInternals is True):
+                                makepat=r'([\n]+(\w)+[:]?=(\w)+)'
+                                re.compile(makepat)
+                                filename = os.path.join(direntry, fname)
+                                with open(filename) as fd:
+                                    bufstr = fd.read()
+                                    fexpr = re.compile(makepat)
+                                    fstr = fexpr.findall(bufstr)
+                                    for defstr in fstr:
+                                        print(" ",' '*8*(direntry.count(os.sep)),"  ==> ", "%s" %(defstr[0].strip()))
+                        
 
     def showdoxyoutput(self):
         # Print all header file paths
@@ -349,6 +361,8 @@ class  peeksrc:
             options.extngroup = "unknown"
         if options.extngroup in [key for key in self._AllExtnNodes.keys()]:
             extnlist = self._AllExtnNodes[options.extngroup].keys()
+            if options.extngroup == 'make' :
+                self.showMakeInternals = True
 
         if ((options.extngroup) and (len(extnlist) == 0)):
             print("Supported extn group are: %s" %groups)
